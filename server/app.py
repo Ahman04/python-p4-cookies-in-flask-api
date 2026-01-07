@@ -1,30 +1,45 @@
-from flask import Flask, request, session, jsonify, make_response
+#!/usr/bin/env python3
+
+from flask import Flask, request, jsonify, make_response, session
 
 app = Flask(__name__)
-app.json.compact = False
 
-app.secret_key = b'?w\x85Z\x08Q\xbdO\xb8\xa9\xb65Kj\xa9_'
+# REQUIRED for sessions to work
+app.secret_key = "super-secret-key"
 
-@app.route('/sessions/<string:key>', methods=['GET'])
+@app.get("/")
+def index():
+    return {"message": "API running"}, 200
+
+
+@app.route("/sessions/<string:key>", methods=["GET"])
 def show_session(key):
-
+    # Set session values if they do not exist
     session["hello"] = session.get("hello") or "World"
     session["goodnight"] = session.get("goodnight") or "Moon"
 
-    response = make_response(jsonify({
-        'session': {
-            'session_key': key,
-            'session_value': session[key],
-            'session_accessed': session.accessed,
-        },
-        'cookies': [{cookie: request.cookies[cookie]}
-            for cookie in request.cookies],
-    }), 200)
+    response = make_response(
+        jsonify(
+            {
+                "session": {
+                    "session_key": key,
+                    "session_value": session.get(key),
+                    "session_accessed": session.accessed,
+                },
+                "cookies": [
+                    {cookie: request.cookies[cookie]}
+                    for cookie in request.cookies
+                ],
+            }
+        ),
+        200,
+    )
 
-    response.set_cookie('mouse', 'Cookie')
+    # Set a normal cookie
+    response.set_cookie("mouse", "Cookie")
 
     return response
 
-if __name__ == '__main__':
-    app.run(port=5555)
-    
+
+if __name__ == "__main__":
+    app.run(port=5555, debug=True)
