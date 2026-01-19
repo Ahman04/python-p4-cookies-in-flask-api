@@ -6,9 +6,10 @@ name = "pypi"
 [packages]
 importlib-metadata = "6.0.0"
 importlib-resources = "5.10.0"
-flask = "2.2.2"
+flask = "==2.3.3"
+werkzeug = "==2.3.7"
 
 [dev-packages]
 
 [requires]
-python_full_version = "3.8.13"
+python_full_version = "3.12.3"
